@@ -6,10 +6,13 @@ var app = express();
 
 const port = 80;
 
-app.get(/\/$|\/index(?:\.html)?$/, async function(req, res) {
+app.get(/^\/$|^\/index(?:\.html)?$/, async function(req, res) {
   res.sendFile(`index.html`, { root: __dirname });
 });
 
+if (!fs.existsSync("./ytvideos/")){
+  fs.mkdirSync("./ytvideos");
+}
 app.get('/api/ytdl', async function(req, res) {
   try {
     var videoUrl = decodeURIComponent(req.query.v);

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+        <title>YouTube Downloader</title>
+        <style>
+            * { text-align: center; }
+            div {
+                width: 510px;
+                height: 90px;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+            .longInput { width: 350px; }
+            .shortInput { width: 190px; }
+        </style>
+    </head>
+    <body>
+        <div>
+			<form class="pure-form">
+				<input type="text" id="yturl" class="longInput" name="url"/>&ensp;
+				<button class="pure-button pure-button-active" id="dlbtn">Download</button>
+				<br><br>
+				<input type="text" id="startTime" class="shortInput" name="time" placeholder="From HH:MM:SS.ss"/>&ensp;
+				<input type="text" id="duration" class="shortInput" name="time" placeholder="Duration HH:MM:SS.ss"/>&ensp;
+
+				<select name="format" id="vidFormat">
+					<option value="mp4">.MP4</option>
+					<option value="avi">.AVI</option>
+					<option value="webm">.WEBM</option>
+					<option value="mkv">.MKV</option>
+					<option value="m4a">.M4A</option>
+					<option value="wmv">.WMV</option>
+					<option value="mp3">.MP3</option>
+					<option value="ogg">.OGG</option>
+					<option value="wav">.WAV</option>
+					<option value="aac">.AAC</option>
+				</select>
+			</form>
+        </div>
+        <script>
+            document.getElementById("dlbtn").onclick = function() {
+                if (document.getElementById('yturl').value.replace(/^(?:https?:\/\/)?(?:(?:www\.)?youtube.com\/watch\?v=|youtu.be\/)(\w+)$/,'').length == 0) {
+                    var startTime = document.getElementById('startTime').value;
+                    var duration = document.getElementById('duration').value;
+                    var url = "api/ytdl?v=" + encodeURIComponent(document.getElementById('yturl').value) + "&format=" + document.getElementById('vidFormat').value;
+                    if (isTime(startTime) && startTime.replace(/:|\.|0/g,'') != '') url += "&ss=" + startTime;
+                    if (isTime(duration) && duration.replace(/:|\.|0/g,'') != '') url += "&t=" + duration;
+                    location.href = url;
+                }
+            }
+
+            function isTime(timeString) {
+                return (
+                    timeString.replace(/\d{2}|:|\.\d{2}$/g,'') == '' &&
+                    (timeString.replace(/\d{2}|\.\d{2}$/g,'').match(/:/g) || []).length <= 2
+                );
+            }
+        </script>
+    </body>
+</html>

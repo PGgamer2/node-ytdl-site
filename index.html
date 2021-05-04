@@ -15,20 +15,20 @@
                 right: 0;
                 margin: auto;
             }
-            .longInput { width: 350px; }
+            .longInput { width: 388px; }
             .shortInput { width: 190px; }
         </style>
     </head>
     <body>
         <div>
 			<form class="pure-form">
-				<input type="text" id="yturl" class="longInput" name="url"/>&ensp;
+				<input type="text" id="yturl" class="longInput"/>&ensp;
 				<button class="pure-button pure-button-active" id="dlbtn">Download</button>
 				<br><br>
-				<input type="text" id="startTime" class="shortInput" name="time" placeholder="From HH:MM:SS.ss"/>&ensp;
-				<input type="text" id="duration" class="shortInput" name="time" placeholder="Duration HH:MM:SS.ss"/>&ensp;
+				<input type="text" id="startTime" class="shortInput" placeholder="From HH:MM:SS.ss"/>&ensp;
+				<input type="text" id="duration" class="shortInput" placeholder="Duration HH:MM:SS.ss"/>&ensp;
 
-				<select name="format" id="vidFormat">
+				<select id="vidFormat">
 					<option value="mp4">.MP4</option>
 					<option value="avi">.AVI</option>
 					<option value="webm">.WEBM</option>
@@ -44,20 +44,21 @@
         </div>
         <script>
             document.getElementById("dlbtn").onclick = function() {
-                if (document.getElementById('yturl').value.replace(/^(?:https?:\/\/)?(?:(?:www\.)?youtube.com\/watch\?v=|youtu.be\/)(\w+)$/,'').length == 0) {
+                if (document.getElementById('yturl').value && document.getElementById('yturl').value.replace(/^(?:https?:\/\/)?(?:(?:www\.)?youtube.com\/watch\?v=|youtu.be\/)(\w+)$/,'').length == 0) {
                     var startTime = document.getElementById('startTime').value;
                     var duration = document.getElementById('duration').value;
-                    var url = "api/ytdl?v=" + encodeURIComponent(document.getElementById('yturl').value) + "&format=" + document.getElementById('vidFormat').value;
-                    if (isTime(startTime) && startTime.replace(/:|\.|0/g,'') != '') url += "&ss=" + startTime;
-                    if (isTime(duration) && duration.replace(/:|\.|0/g,'') != '') url += "&t=" + duration;
-                    location.href = url;
+                    var dlurl = "api/ytdl?v=" + encodeURIComponent(document.getElementById('yturl').value) + "&format=" + document.getElementById('vidFormat').value;
+                    if (isTime(startTime) && startTime.replace(/:|\.|0/g,'') != '') dlurl += "&ss=" + startTime;
+                    if (isTime(duration) && duration.replace(/:|\.|0/g,'') != '') dlurl += "&t=" + duration;
+                    window.open(dlurl);
                 }
-            }
+            };
 
             function isTime(timeString) {
                 return (
-                    timeString.replace(/\d{2}|:|\.\d{2}$/g,'') == '' &&
-                    (timeString.replace(/\d{2}|\.\d{2}$/g,'').match(/:/g) || []).length <= 2
+                    timeString.length > 0 &&
+                    timeString.replace(/(?:^\d)?\d:\d(?:\d$)?|\d{1,2}\.\d{1,2}$|^\d+$/g,'') == '' &&
+                    (timeString.replace(/\d|\./g,'').match(/:/g) || []).length <= 2
                 );
             }
         </script>
